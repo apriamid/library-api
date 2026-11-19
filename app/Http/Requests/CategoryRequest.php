@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CategoryRequest extends FormRequest
 {
@@ -25,7 +26,7 @@ class CategoryRequest extends FormRequest
     {
         $presence = $this->isMethod('post') ? 'required' : 'sometimes';
         return [
-            'name'        => [$presence, 'string', 'max:100', Rule::unique('categories')->ignore($this->route('category'))],
+            'name'        => [$presence, 'string', 'max:100', Rule ::unique('categories')->ignore($this->route('category'))],
             'description' => ['nullable', 'string'],
         ];
     }
