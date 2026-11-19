@@ -12,10 +12,17 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+
+    
+    // ->withExceptions(function (Exceptions $exceptions) {
+    //     $exceptions->shouldRenderJsonWhen(fn (Request $r, Throwable $e) => $r->is('api/*') || $r->expectsJson());
+    // })
+
     ->withMiddleware(function (Middleware $middleware): void {
         //
     })
-    ->withExceptions(function (Exceptions $exceptions): void {
+
+    ->withExceptions(function (Exceptions $exceptions){
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
