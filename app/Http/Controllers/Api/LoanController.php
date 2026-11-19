@@ -14,12 +14,12 @@ class LoanController extends Controller
 {
     private const LOAN_DAYS = 7;
 
+    //Loan return
     public function returnBook(Request $request, Loan $loan)
     {
         abort_unless($loan->user_id === $request->user()->id, 403, 'This loan is not yours.');
 
         DB::transaction(function () use ($loan) {
-            // Hanya satu request yang bisa mengubah returned_at dari NULL.
             abort_unless(
                 Loan::whereKey($loan->id)->whereNull('returned_at')->update(['returned_at' => now()]),
                 422, 'Book has already been returned.'
@@ -30,6 +30,21 @@ class LoanController extends Controller
 
         return LoanResource::make($loan->refresh()->load('book.category'));
     }
+
+    //Loan list
+    public function index(Request $request)
+    {
+        $status = $request->query('status', 'active'); 
+        $loans = $request->user()->loans()
+            ->with('book.category')
+            ->when($status === 'active', fn ($q) => $q->active())
+            ->when($status === 'returned', fn ($q) => $q->whereNotNull('returned_at'))
+            ->latest('borrowed_at')
+            ->paginate(15);
+
+        return LoanResource::collection($loans);
+    }
+
     public function store(StoreLoanRequest $request)
     {
         $user   = $request->user();
