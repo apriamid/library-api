@@ -16,6 +16,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::apiResource('categories', CategoryController::class);
 
+Route::patch('loans/{loan}/return', [LoanController::class, 'returnBook']);
+
 Route::post('loans', [LoanController ::class, 'store']);
 
 Route::apiResource('books', BookController::class);
